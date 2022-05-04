@@ -19,15 +19,17 @@ class Start:
         self.start_instructions.grid(row=1, padx=10, pady=10)
 
         # create button frame (row 2)
-        self.button_frame = Frame(self.start_frame)
+        self.button_frame = Frame(self.start_frame, bg=back_ground)
         self.button_frame.grid(row=2)
 
         # set up buttons in button frame, added padding
-        self.easy_button = Button(self.button_frame, text="Easy", font="Arial 12 italic")
+        self.easy_button = Button(self.button_frame, text="Easy", font="Arial 12 italic", command=lambda: self.to_quiz(1))
         self.easy_button.grid(row=0, column=0, padx=10, pady=10)
-        self.medium_button = Button(self.button_frame, text="Medium", font="Arial 12 italic")
+
+        self.medium_button = Button(self.button_frame, text="Medium", font="Arial 12 italic", command=lambda: self.to_quiz(2))
         self.medium_button.grid(row=0, column=1, padx=10, pady=10)
-        self.hard_button = Button(self.button_frame, text="Hard", font="Arial 12 italic")
+
+        self.hard_button = Button(self.button_frame, text="Hard", font="Arial 12 italic", command=lambda: self.to_quiz(3))
         self.hard_button.grid(row=0, column=2, padx=10, pady=10)
 
         # help button (row 3)
@@ -38,6 +40,51 @@ class Start:
         # redirect to a separate frame to give more detailed information of the game to user
         get_help = Help(self)
         root.withdraw()
+    
+    def to_quiz(self, difficulty):
+        # redirect to quiz
+        show_quiz = Quiz(self, difficulty)
+        root.withdraw()
+
+class Quiz:
+    def __init__(self, partner, difficulty):
+        back_ground = "light blue"
+        # Create quiz gui and set up grid
+        self.quiz_box = Toplevel()
+        self.quiz_frame = Frame(self.quiz_box, bg=back_ground)
+        self.quiz_frame.grid()
+
+        # if users press cross at top, quiz quits
+        self.quiz_box.protocol('WM_DELETE_WINDOW', self.to_quit)
+
+        # heading row (row 0)
+        self.quiz_heading = Label(self.quiz_frame, text="Math Quiz: Easy", font="arial 14 bold", justify=LEFT, bg=back_ground)
+        self.quiz_heading.grid(row=0, padx=10, pady=10)
+
+        # Question label
+        self.question_label = Label(self.quiz_frame, text="question goes here", font="arial 12 italic", justify=CENTER, bg=back_ground)
+        self.question_label.grid(row=1, padx=10, pady=10)
+        # Entry box, Button & Error label (row 2)
+        self.entry_error_frame = Frame(self.quiz_frame, width=200)
+        self.entry_error_frame.grid(row=2, padx=10, pady=10)
+
+        self.start_amount_entry = Entry(self.entry_error_frame, font="Arial 19 bold", width=10)
+        self.start_amount_entry.grid(row=0, column=0)
+
+        # Stats button to export results (row 3)
+        self.help_export_frame = Frame(self.quiz_frame)
+        self.stats_button = Button(self.help_export_frame, text="Quiz Stats...", font="Arial 14 bold", bg="#003366", fg="white")
+        self.stats_button.grid(row=3, column=0, padx=2)
+
+        # Quit button
+        self.quit_button = Button(self.quiz_frame, text="Quit", fg="white", bg="#660000", font="arial 14 bold", command=self.to_quit, padx=10, pady=10)
+        self.quit_button.grid(row=3, column = 1, pady=10)
+
+        if difficulty == 1:
+            print("Selected easy difficulty")
+
+    def to_quit(self):
+        root.destroy()
 
 class Help:
     def __init__(self, partner):
@@ -59,7 +106,7 @@ class Help:
         self.how_heading = Label(self.help_frame, text="Help / Instructions", font="arial 14 bold")
         self.how_heading.grid(row=0)
 
-        help_text = "Select a difficulty level to start the quiz. The quiz is solely based on straight forward calculations so there are no word problems involved at all. Types of questions to expect for each level:\n\nEasy - Simple addition and subtraction questions a child could do\n\nMedium - Multiplication and division questions aimed for students with possible logarithmic questions mixed in\n\nHard - Just year 12 calculus stuff"
+        help_text = "Select a difficulty level to start the quiz. The quiz is solely based on straight forward calculations so there are no word problems involved at all. Types of questions to expect for each level:\n\nEasy - Simple addition and subtraction questions a child could do\n\nMedium - Multiplication and division questions aimed for students with possible logarithmic questions mixed in\n\nHard - Just year 12 calculus stuff\n\nThere is a calculator available to use for some simple calculations, good luck :)"
         
         self.help_text = Label(self.help_frame, text=help_text, justify=LEFT, wrap=400, padx=10, pady=10)
         self.help_text.grid(row=1)
