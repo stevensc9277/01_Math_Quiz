@@ -51,6 +51,7 @@ class Quiz:
         back_ground = "light blue"
         # Create quiz gui and set up grid
         self.quiz_box = Toplevel()
+        
         self.quiz_frame = Frame(self.quiz_box, bg=back_ground)
         self.quiz_frame.grid()
 
@@ -58,33 +59,52 @@ class Quiz:
         self.quiz_box.protocol('WM_DELETE_WINDOW', self.to_quit)
 
         # heading row (row 0)
-        self.quiz_heading = Label(self.quiz_frame, text="Math Quiz: Easy", font="arial 14 bold", justify=LEFT, bg=back_ground)
+        self.quiz_heading = Label(self.quiz_frame, text="Math Quiz: Easy", font="arial 14 bold", bg=back_ground)
         self.quiz_heading.grid(row=0, padx=10, pady=10)
 
         # Question label
         self.question_label = Label(self.quiz_frame, text="question goes here", font="arial 12 italic", justify=CENTER, bg=back_ground)
         self.question_label.grid(row=1, padx=10, pady=10)
         # Entry box, Button & Error label (row 2)
-        self.entry_error_frame = Frame(self.quiz_frame, width=200)
+        self.entry_error_frame = Frame(self.quiz_frame, bg=back_ground)
         self.entry_error_frame.grid(row=2, padx=10, pady=10)
 
-        self.start_amount_entry = Entry(self.entry_error_frame, font="Arial 19 bold", width=10)
-        self.start_amount_entry.grid(row=0, column=0)
+        self.answer_entry = Entry(self.entry_error_frame, font="Arial 19 bold", width=10, justify=CENTER)
+        self.answer_entry.grid(row=0, column=0)
+        self.submit_button = Button(self.entry_error_frame, text="Submit", font="arial 14", command= self.to_check)
+        self.submit_button.grid(row=0, column=1, padx=5)
 
-        # Stats button to export results (row 3)
-        self.help_export_frame = Frame(self.quiz_frame)
-        self.stats_button = Button(self.help_export_frame, text="Quiz Stats...", font="Arial 14 bold", bg="#003366", fg="white")
-        self.stats_button.grid(row=3, column=0, padx=2)
+        # Stats button to export results and a calculator (row 3)
+        self.help_export_frame = Frame(self.quiz_frame, bg=back_ground)
+        self.help_export_frame.grid(row=3)
+        self.stats_button = Button(self.help_export_frame, text="Quiz Stats", font="Arial 14 bold", bg="#003366", fg="white")
+        self.stats_button.grid(row=0, column=0, padx=2, pady=2)
+
+        self.calc_button = Button(self.help_export_frame, text="Calculator", font="Arial 14 bold", bg="#003366", fg="white")
+        self.calc_button.grid(row=0, column=1, padx=3, pady=2)
 
         # Quit button
-        self.quit_button = Button(self.quiz_frame, text="Quit", fg="white", bg="#660000", font="arial 14 bold", command=self.to_quit, padx=10, pady=10)
-        self.quit_button.grid(row=3, column = 1, pady=10)
+        self.quit_button = Button(self.quiz_frame, text="Quit", fg="white", width=15, bg="#660000", font="arial 14 bold", command=self.to_quit)
+        self.quit_button.grid(row=4, padx=10, pady=10)
 
         if difficulty == 1:
-            print("Selected easy difficulty")
+            for i in range(0, 20):
+                num1 = random.randint(1, 20)
+                num2 = random.randint(1, 20)
+                question_text = "{} + {} = ?".format(num1, num2)
+                self.question_label.config(text=question_text)
+
+        elif difficulty == 2:
+            print("Selected medium difficulty")
+
+        else:
+            print("Selected hard difficulty")
 
     def to_quit(self):
         root.destroy()
+     
+    def to_check(self, answer):
+        print("CHECK IF ANSWER IS CORRECT HERE")
 
 class Help:
     def __init__(self, partner):
