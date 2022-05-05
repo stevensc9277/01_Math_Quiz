@@ -1,4 +1,6 @@
 from tkinter import *
+# randomly select operator (+, -, *, / )
+import operator
 from functools import partial
 import random
 
@@ -89,10 +91,24 @@ class Quiz:
 
         if difficulty == 1:
             for i in range(0, 20):
+                # generate operator and numbers for addition and subtraction
+                operators = [('+', operator.add), ('-', operator.sub)]
+                op, fn = random.choice(operators)
                 num1 = random.randint(1, 20)
                 num2 = random.randint(1, 20)
-                question_text = "{} + {} = ?".format(num1, num2)
+
+                # config question to show numbers
+                question_text = "{} {} {} = ?".format(num1, op, num2)
                 self.question_label.config(text=question_text)
+
+                # solve and check
+                answer = self.answer_entry.get()
+                if answer != fn(num1, num2):
+                    print("Incorrect")
+                
+                else:
+                    print("Correct")
+
 
         elif difficulty == 2:
             print("Selected medium difficulty")
@@ -104,7 +120,13 @@ class Quiz:
         root.destroy()
      
     def to_check(self, answer):
-        print("CHECK IF ANSWER IS CORRECT HERE")
+        global fn, num1, num2
+        if answer != fn(num1, num2):
+            print("Incorrect")
+                
+        else:
+            print("Correct")
+
 
 class Help:
     def __init__(self, partner):
