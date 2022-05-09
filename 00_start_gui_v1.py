@@ -90,26 +90,10 @@ class Quiz:
         self.quit_button.grid(row=4, padx=10, pady=10)
 
         if difficulty == 1:
-            for i in range(0, 20):
-                # generate operator and numbers for addition and subtraction
-                operators = [('+', operator.add), ('-', operator.sub)]
-                op, fn = random.choice(operators)
-                num1 = random.randint(1, 20)
-                num2 = random.randint(1, 20)
-
-                # config question to show numbers
-                question_text = "{} {} {} = ?".format(num1, op, num2)
-                self.question_label.config(text=question_text)
-
-                # solve and check
-                answer = self.answer_entry.get()
-                if answer != fn(num1, num2):
-                    print("Incorrect")
-                
-                else:
-                    print("Correct")
-
-
+            print("Easy")
+            self.make_question()
+            
+        
         elif difficulty == 2:
             print("Selected medium difficulty")
 
@@ -118,14 +102,36 @@ class Quiz:
 
     def to_quit(self):
         root.destroy()
-     
-    def to_check(self, answer):
-        global fn, num1, num2
-        if answer != fn(num1, num2):
+    
+    def make_question(self):
+        # generate operator and numbers for addition and subtraction
+            operators = [('+', operator.add), ('-', operator.sub)]
+            op, fn = random.choice(operators)
+            num1 = random.randint(1, 20)
+            num2 = random.randint(1, 20)
+            correct_answer = fn(num1, num2)
+            self.submit_button.config(command= lambda: self.to_check(correct_answer))
+
+            # config question to show numbers
+            question_text = "{} {} {} = ?".format(num1, op, num2)
+            self.question_label.config(text=question_text)
+
+    def to_check(self, sum_or_diff):
+        # solve and check
+        answer = self.answer_entry.get()
+        answer = int(answer)
+        if answer != sum_or_diff:
             print("Incorrect")
+            self.answer_entry.config(bg="#ffafaf")
+        
                 
         else:
             print("Correct")
+            self.answer_entry.config(bg="#98FB98")
+
+        self.question_label.after(3000, self.to_check)
+
+        self.make_question()    
 
 
 class Help:
