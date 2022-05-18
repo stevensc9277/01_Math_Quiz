@@ -1,5 +1,4 @@
 from tkinter import *
-from playsound import playsound
 # randomly select operator (+, -, *, / )
 import operator
 from functools import partial
@@ -8,13 +7,10 @@ import random
 class Start:
     def __init__(self, parent):
         
-        
         back_ground = "light blue"
         # initialise start frame GUI
         self.start_frame = Frame(root, bg=back_ground)
         self.start_frame.grid()
-
-        playsound(r'LAKEY INSPIRED - Blue Boi (online-audio-converter.com).mp3')
 
         # create labels (Heading & instructions)
         self.start_label = Label(self.start_frame, bg=back_ground, text="Math Quiz", font="Arial 14 bold", justify=CENTER)
@@ -78,11 +74,14 @@ class Quiz:
         self.answer_entry.grid(row=0, column=0)
         self.submit_button = Button(self.entry_error_frame, text="Submit", font="arial 14", command= self.to_check)
         self.submit_button.grid(row=0, column=1, padx=5)
-       
+
+        self.error_entry = Label(self.quiz_frame, font="Arial 12 bold", bg=back_ground, wrap=250)
+        self.error_entry.grid(row=3, padx=5, pady=5)
+      
 
         # Stats button to export results and a calculator (row 3)
         self.help_export_frame = Frame(self.quiz_frame, bg=back_ground)
-        self.help_export_frame.grid(row=3)
+        self.help_export_frame.grid(row=4)
         self.stats_button = Button(self.help_export_frame, text="Quiz Stats", font="Arial 14 bold", bg="#003366", fg="white")
         self.stats_button.grid(row=0, column=0, padx=5, pady=10)
 
@@ -98,7 +97,7 @@ class Quiz:
             
         
         elif difficulty == 2:
-            print("Selected medium difficulty")
+            print("Selected medium difficulty, ∫")
 
         else:
             print("Selected hard difficulty")
@@ -111,6 +110,7 @@ class Quiz:
         # after making a new question, revert any color changes and clear entry box
         self.answer_entry.config(bg="white")
         self.answer_entry.delete(0, 'end')
+        self.error_entry.config(text="")
 
         # generate operator and numbers for addition and subtraction
         operators = [('+', operator.add), ('-', operator.sub)]
@@ -125,29 +125,40 @@ class Quiz:
         # config question to show numbers
         question_text = "{} {} {} = ?".format(num1, op, num2)
         self.question_label.config(text=question_text)
+          # bind entry label to enter key (<Return>)
+        self.answer_entry.bind('<Return>', lambda e: self.to_check(num1, op, num2, correct_answer))
+       
 
     # compares user answer with computed
     def to_check(self, number1, oper, number2, sum_or_diff):
         # solve and check
         answer = self.answer_entry.get()
-        answer = int(answer)
 
-        # if answer is wrong change bg to red to indicate it is wrong
-        if answer != sum_or_diff:
-            print("Incorrect")
+        try:
+            answer = int(answer)
+            
+
+            # if answer is wrong change bg to red to indicate it is wrong
+            if answer != sum_or_diff:
+                print("Incorrect")
+                self.question_label.config(text="{} {} {} = {}".format(number1, oper, number2, sum_or_diff))
+                self.answer_entry.config(bg="#ffafaf")
+            
+            # if answer is correct change bg to green to indicate it is right
+            else:
+                print("Correct")
+                self.answer_entry.config(bg="#98FB98")
+
+            # freezes gui for about 2 seconds and then generate a new question
+            self.question_label.after(1500, self.make_question)   
+
+        except ValueError:
+            print("Incorrect, bad input detected")
             self.question_label.config(text="{} {} {} = {}".format(number1, oper, number2, sum_or_diff))
             self.answer_entry.config(bg="#ffafaf")
-        
-        # if answer is correct change bg to green to indicate it is right
-        else:
-            print("Correct")
-            self.answer_entry.config(bg="#98FB98")
+            self.error_entry.config(text="Please use numbers to answer the questions", fg="red")
+            self.question_label.after(1500, self.make_question)  
 
-        # freezes gui for about 2 seconds and then generate a new question
-        self.question_label.after(1200, self.make_question)   
-
-
-        
 class Help:
     def __init__(self, partner):
 
