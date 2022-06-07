@@ -2,7 +2,7 @@ def num_check():
    
     while True:
         try:
-            response = int(input())
+            response = int(input("Enter a number: "))
             # continues fine
             
 
