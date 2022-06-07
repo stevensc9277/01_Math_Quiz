@@ -1,10 +1,11 @@
 from tkinter import *
-from playsound import playsound
 # randomly select operator (+, -, *, / )
 import operator
 from functools import partial
 import random
 
+
+score = 0
 class Start:
     def __init__(self, parent):
         
@@ -14,7 +15,6 @@ class Start:
         self.start_frame = Frame(root, bg=back_ground)
         self.start_frame.grid()
 
-        playsound(r'LAKEY INSPIRED - Blue Boi (online-audio-converter.com).mp3')
 
         # create labels (Heading & instructions)
         self.start_label = Label(self.start_frame, bg=back_ground, text="Math Quiz", font="Arial 14 bold", justify=CENTER)
@@ -28,18 +28,19 @@ class Start:
         self.button_frame.grid(row=2)
 
         # set up buttons in button frame, added padding
-        self.easy_button = Button(self.button_frame, text="Easy", font="Arial 12 italic", command=lambda: self.to_quiz(1))
+        self.easy_button = Button(self.button_frame, text="Easy", font="Arial 12 italic", bg="#90EE90", command=lambda: self.to_quiz(1))
         self.easy_button.grid(row=0, column=0, padx=10, pady=10)
 
-        self.medium_button = Button(self.button_frame, text="Medium", font="Arial 12 italic", command=lambda: self.to_quiz(2))
+        self.medium_button = Button(self.button_frame, text="Medium", font="Arial 12 italic", bg="#FFFFA1", command=lambda: self.to_quiz(2))
         self.medium_button.grid(row=0, column=1, padx=10, pady=10)
 
-        self.hard_button = Button(self.button_frame, text="Hard", font="Arial 12 italic", command=lambda: self.to_quiz(3))
+        self.hard_button = Button(self.button_frame, text="Hard", font="Arial 12 italic", bg="#FFCCCB", command=lambda: self.to_quiz(3))
         self.hard_button.grid(row=0, column=2, padx=10, pady=10)
 
         # help button (row 3)
         self.help_button = Button(self.start_frame, text="Help", font="Arial 12", command=self.to_help)
         self.help_button.grid(row=3, padx=10, pady=10)
+
 
     def to_help(self):
         # redirect to a separate frame to give more detailed information of the game to user
@@ -53,6 +54,7 @@ class Start:
 
 class Quiz:
     def __init__(self, partner, difficulty):
+
         back_ground = "light blue"
         # Create quiz gui and set up grid
         self.quiz_box = Toplevel()
@@ -64,8 +66,11 @@ class Quiz:
         self.quiz_box.protocol('WM_DELETE_WINDOW', self.to_quit)
 
         # heading row (row 0)
-        self.quiz_heading = Label(self.quiz_frame, text="Math Quiz: Easy", font="arial 14 bold", bg=back_ground)
-        self.quiz_heading.grid(row=0, padx=10, pady=10)
+        self.quiz_heading = Label(self.quiz_frame, text="Math Quiz: Easy", justify=LEFT, font="arial 14 bold", bg=back_ground)
+        self.quiz_heading.grid(row=0, padx=10, pady=10, sticky=W)
+
+        self.quiz_score = Label(self.quiz_frame, text="Score: 0", font="arial 11 italic", bg=back_ground)
+        self.quiz_score.grid(row=0, sticky=E)
 
         # Question label
         self.question_label = Label(self.quiz_frame, text="question goes here", font="arial 12 bold", justify=CENTER, bg=back_ground)
@@ -93,20 +98,22 @@ class Quiz:
         self.quit_button.grid(row=0, column=1, padx=5, pady=10)
 
         if difficulty == 1:
-            print("Easy")
-            self.make_question()
+            print("1")
+            self.make_question(difficulty)
             
         
         elif difficulty == 2:
-            print("Selected medium difficulty")
+            print("2")
+            self.make_question(difficulty)
 
         else:
-            print("Selected hard difficulty")
+            print("3")
 
     def to_quit(self):
         root.destroy()
     
-    def make_question(self):
+    # generating addition and subtraction questions
+    def make_question(self, fun):    
 
         # after making a new question, revert any color changes and clear entry box
         self.answer_entry.config(bg="white")
@@ -120,14 +127,15 @@ class Quiz:
         if num1 < num2:
             num1 = num1+num2
         correct_answer = fn(num1, num2)
-        self.submit_button.config(command= lambda: self.to_check(num1, op, num2, correct_answer))
+        self.submit_button.config(command= lambda: self.to_check(num1, op, num2, correct_answer, fun))
 
         # config question to show numbers
         question_text = "{} {} {} = ?".format(num1, op, num2)
         self.question_label.config(text=question_text)
 
-    # compares user answer with computed
-    def to_check(self, number1, oper, number2, sum_or_diff):
+    # compares user answer with computed for easy difficulty
+    def to_check(self, number1, oper, number2, sum_or_diff, difficulty):
+        global score
         # solve and check
         answer = self.answer_entry.get()
         answer = int(answer)
@@ -135,16 +143,20 @@ class Quiz:
         # if answer is wrong change bg to red to indicate it is wrong
         if answer != sum_or_diff:
             print("Incorrect")
+            score -= difficulty
             self.question_label.config(text="{} {} {} = {}".format(number1, oper, number2, sum_or_diff))
             self.answer_entry.config(bg="#ffafaf")
         
         # if answer is correct change bg to green to indicate it is right
         else:
             print("Correct")
+            score += difficulty
+     
             self.answer_entry.config(bg="#98FB98")
 
         # freezes gui for about 2 seconds and then generate a new question
-        self.question_label.after(1200, self.make_question)   
+        self.quiz_score.config(text="Score: {}".format(score))
+        self.question_label.after(1200, lambda: self.make_question(difficulty))   
 
 
         
