@@ -1,0 +1,11 @@
+def entry_focus(self, event):  # changes entry label fg back to black
+    self.area_entry.delete(0, "end")
+    self.area_entry['foreground'] = 'black'
+    self.area_entry.unbind("<FocusIn>")
+
+def leave_focus(self, event):  # changes entry label fg back to black
+    user_input =  self.area_entry.get()
+    if user_input == "":
+        self.area_entry.insert(0, "A = 0.5 x b x h")
+    self.area_entry['foreground'] = 'black'
+    # self.area_entry.unbind("<FocusIn>")
