@@ -32,7 +32,7 @@ class Draw:
         # make entry labels and labels with a new frame
         self.area_perimeter_frame = Frame(self.master_frame, bg=back)
         self.area_perimeter_frame.grid()
-        self.area_label = Label(self.area_perimeter_frame, font="arial 14", text="Area", justify=LEFT, bg=back)
+        self.area_label = Label(self.area_perimeter_frame, font="arial 13", text="Area", justify=LEFT, bg=back)
         self.area_label.grid(row=0, column=0, pady=10, padx=10, sticky="NEWS")
         self.area_entry = Entry(self.area_perimeter_frame, justify=CENTER, fg="grey")
         self.area_entry.insert(0, "A = 0.5 x b x h")
@@ -43,7 +43,7 @@ class Draw:
         self.area_entry.grid(row=0, column=1, ipady=12, pady=5)
 
 
-        self.perimeter_label = Label(self.area_perimeter_frame, font="arial 14", text="Perimeter", justify=LEFT, bg=back)
+        self.perimeter_label = Label(self.area_perimeter_frame, font="arial 13", text="Perimeter", justify=LEFT, bg=back)
         self.perimeter_label.grid(row=1, column=0, padx=10, pady=10, sticky="NEWS")
         self.perimeter_entry = Entry(self.area_perimeter_frame, justify=CENTER, fg="grey")
         self.perimeter_entry.insert(0, "P = AB + BC + CA")
