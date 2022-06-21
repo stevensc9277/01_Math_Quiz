@@ -32,21 +32,32 @@ class Draw:
         # make entry labels and labels with a new frame
         self.area_perimeter_frame = Frame(self.master_frame, bg=back)
         self.area_perimeter_frame.grid()
-        self.area_label = Label(self.area_perimeter_frame, text="Area", justify=LEFT, bg=back)
+        self.area_label = Label(self.area_perimeter_frame, font="arial 14", text="Area", justify=LEFT, bg=back)
         self.area_label.grid(row=0, column=0, pady=10, padx=10, sticky="NEWS")
         self.area_entry = Entry(self.area_perimeter_frame, justify=CENTER, fg="grey")
         self.area_entry.insert(0, "A = 0.5 x b x h")
-        self.area_entry.bind("<FocusIn>", lambda e: self.on_enter(e))
-        self.area_entry.bind("<FocusOut>", lambda e: self.on_leave(e))
-        self.area_entry.grid(row=0, column=1)
 
-        self.perimeter_label = Label(self.area_perimeter_frame,text="Perimeter", justify=LEFT, bg=back)
+        # bind commands, shows formulae if no input is detected or does nothing
+        self.area_entry.bind("<FocusIn>", lambda e: self.on_enter(e, self.area_entry))
+        self.area_entry.bind("<FocusOut>", lambda e: self.on_leave(e, self.area_entry))
+        self.area_entry.grid(row=0, column=1, ipady=12, pady=5)
+
+
+        self.perimeter_label = Label(self.area_perimeter_frame, font="arial 14", text="Perimeter", justify=LEFT, bg=back)
         self.perimeter_label.grid(row=1, column=0, padx=10, pady=10, sticky="NEWS")
         self.perimeter_entry = Entry(self.area_perimeter_frame, justify=CENTER, fg="grey")
         self.perimeter_entry.insert(0, "P = AB + BC + CA")
-        self.perimeter_entry.bind("<FocusIn>", lambda e: self.on_enter(e))
-        self.perimeter_entry.bind("<FocusOut>", lambda e: self.on_leave(e))
-        self.perimeter_entry.grid(row=1, column=1, padx=10, pady=10)
+        self.perimeter_entry.bind("<FocusIn>", lambda e: self.on_enter(e, self.perimeter_entry))
+        self.perimeter_entry.bind("<FocusOut>", lambda e: self.on_leave(e, self.perimeter_entry))
+        self.perimeter_entry.grid(row=1, column=1, padx=10, pady=10, ipady=12)
+
+        # buttons to submit answers
+        self.area_submit = Button(self.area_perimeter_frame, text="Submit", padx=10, pady=10)
+        self.area_submit.grid(row=0, column=2)
+
+        self.perimeter_submit = Button(self.area_perimeter_frame, text="Submit", padx=10, pady=10)
+        self.perimeter_submit.grid(row=1, column=2)
+
 
 
         # lists for angles and sides
@@ -66,22 +77,28 @@ class Draw:
 
         self.finder(some_angles, some_sides)
 
-    def on_enter(self, e):  # changes entry label fg back to black
-        user_input = self.area_entry.get()
-        if user_input == "A = 0.5 x b x h":
-            self.area_entry.delete(0, "end")
-            self.area_entry['foreground'] = 'black'
+    def on_enter(self, e, name):  # changes entry label fg back to black
+        user_input = name.get()
+        if user_input == "A = 0.5 x b x h" or user_input == "P = AB + BC + CA":
+            name.delete(0, "end")
+            name['foreground'] = 'black'
     
-    def on_leave(self, e):  # changes entry label fg back to black
-        user_input =  self.area_entry.get()
+    def on_leave(self, e, name):  # changes entry label fg back to black and shows formulae if there was no input given
+        user_input =  name.get()
+        if name == self.area_entry and user_input == "":
+            name.insert(0, "A = 0.5 x b x h")
+        
+        elif name == self.perimeter_entry and user_input == "":
+            name.insert(0, "P = AB + BC + CA")
+
         if user_input == "":
-            self.area_entry['foreground'] = 'grey'
-            self.area_entry.insert(0, "A = 0.5 x b x h")
+            name['foreground'] = 'grey'
         
         else:
-            self.area_entry['foreground'] = 'black'
-            self.area_entry.unbind("<FocusOut>")
-    
+            name['foreground'] = 'black'
+            name.unbind("<FocusOut>")
+        
+       
         
     # draw triangle
     def triangle(self, displacement, angle):
