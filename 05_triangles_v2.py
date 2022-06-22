@@ -42,7 +42,6 @@ class Draw:
         self.area_entry.bind("<FocusOut>", lambda e: self.on_leave(e, self.area_entry))
         self.area_entry.grid(row=0, column=1, ipady=12, pady=5)
 
-
         self.perimeter_label = Label(self.area_perimeter_frame, font="arial 13", text="Perimeter", justify=LEFT, bg=back)
         self.perimeter_label.grid(row=1, column=0, padx=10, pady=10, sticky="NEWS")
         self.perimeter_entry = Entry(self.area_perimeter_frame, justify=CENTER, fg="grey")
@@ -52,13 +51,11 @@ class Draw:
         self.perimeter_entry.grid(row=1, column=1, padx=10, pady=10, ipady=12)
 
         # buttons to submit answers
-        self.area_submit = Button(self.area_perimeter_frame, text="Submit", padx=10, pady=10)
+        self.area_submit = Button(self.area_perimeter_frame, text="Submit", padx=10, pady=10, command= lambda: self.answer_check(self.area_entry, some_sides))
         self.area_submit.grid(row=0, column=2)
 
-        self.perimeter_submit = Button(self.area_perimeter_frame, text="Submit", padx=10, pady=10)
+        self.perimeter_submit = Button(self.area_perimeter_frame, text="Submit", padx=10, pady=10, command= lambda: self.answer_check(self.perimeter_entry, some_sides))
         self.perimeter_submit.grid(row=1, column=2)
-
-
 
         # lists for angles and sides
         some_angles = []
@@ -72,10 +69,11 @@ class Draw:
         some_angles.append(b)
 
         # generate sides and append to list
-        A = random.randint(10, 20)
+        A = random.randint(10, 19)
         some_sides.append(A)
 
         self.finder(some_angles, some_sides)
+       
 
     def on_enter(self, e, name):  # changes entry label fg back to black
         user_input = name.get()
@@ -97,9 +95,7 @@ class Draw:
         else:
             name['foreground'] = 'black'
             name.unbind("<FocusOut>")
-        
-       
-        
+         
     # draw triangle
     def triangle(self, displacement, angle):
         self.user_lengths_label.config(text="AB: {}, BC: {}, CA: {}".format(displacement[0], displacement[1], displacement[2]))
@@ -168,6 +164,49 @@ class Draw:
         print(lengths, area)
         
         self.triangle(lengths, angles)
+    
+    def answer_check(self, name, lengths):
+        # get user input
+        try:
+            answer = float(name.get())
+
+            if name == self.area_entry:
+
+                # calculate area, see if it matches user input
+                area = round(0.5 * lengths[0] * lengths[1], 2)
+                print("Area given is ", answer)
+                print("Actual area is ", area)
+                print()
+
+                if answer != area:
+                    self.area_entry.config(bg="#ffafaf")
+                
+                else:
+                    self.area_entry.config(bg="#98FB98")
+                    self.area_submit.config(state=DISABLED)
+        
+            else:
+                perimeter = round(sum(lengths), 2)
+                print("Perimeter given is ", answer)
+                print("Actual perimeter is ", perimeter)
+                print()
+
+                if answer != perimeter:
+                    self.perimeter_entry.config(bg="#ffafaf")
+                
+                else:
+                    self.perimeter_entry.config(bg="#98FB98")
+                    self.perimeter_submit.config(state=DISABLED)
+
+        except ValueError:
+            name.delete(0, "end")
+            name.config(bg="#ffafaf")
+            name.insert(0, "Please enter a float")
+            name.after(1500, lambda e: name.delete(0, "end"), name.config(bg="white"))
+
+    
+
+        
 
 if __name__ == '__main__':
     root = Tk()
