@@ -203,9 +203,17 @@ class Draw:
             # if both area and perimeter answers are correct, generate a new question
             if self.perimeter_entry.cget("bg") == "#98FB98" and self.area_entry.cget("bg") == "#98FB98":
                 print("Both are correct!")
+
+                # reset lists
+                self.perimeter_entry.after(1500, lambda e: name.delete(0, "end"), name.config(bg="white"))
+                self.area_entry.after(1500, lambda e: name.delete(0, "end"), name.config(bg="white"))
                 some_angles.clear()
                 some_sides.clear()
+
+                # reset turtle screen
                 self.screen.resetscreen()
+
+                # change buttons back to normal and entry labels too
                 self.perimeter_submit.config(state=NORMAL)
                 self.area_submit.config(state=NORMAL)
                 self.perimeter_entry.config(bg="white")
