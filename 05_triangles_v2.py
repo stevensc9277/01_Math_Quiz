@@ -2,7 +2,7 @@ import turtle
 import math
 from tkinter import *
 import random
-
+import time
 from numpy import angle
 
 # lists for angles and sides
@@ -62,7 +62,7 @@ class Draw:
 
         self.do_this()
         
-
+    # generate angles and a length
     def do_this(self):
         # generate angles and append to list
         a = random.randint(30, 80)
@@ -71,7 +71,7 @@ class Draw:
         some_angles.append(b)
 
         # generate sides and append to list
-        A = random.randint(10, 19)
+        A = random.randint(10, 18)
         some_sides.append(A)
 
         self.finder(some_angles, some_sides)
@@ -197,19 +197,19 @@ class Draw:
                     self.perimeter_entry.config(bg="#ffafaf")
                 
                 else:
-                    self.perimeter_entry.config(bg="#98FB98")
                     self.perimeter_submit.config(state=DISABLED)
-
+                    self.perimeter_entry.config(bg="#98FB98")
+                    
             # if both area and perimeter answers are correct, generate a new question
             if self.perimeter_entry.cget("bg") == "#98FB98" and self.area_entry.cget("bg") == "#98FB98":
                 print("Both are correct!")
-
-                # reset lists
-                self.perimeter_entry.after(1500, lambda e: name.delete(0, "end"), name.config(bg="white"))
-                self.area_entry.after(1500, lambda e: name.delete(0, "end"), name.config(bg="white"))
+                
+                # reset lists and freeze canvas so user can see triangle before the reset
+                self.perimeter_entry.after(1500, lambda e: e, self.perimeter_entry.delete(0, "end"))
+                self.area_entry.after(1500, lambda e: e, self.area_entry.delete(0, "end"))
                 some_angles.clear()
                 some_sides.clear()
-
+                
                 # reset turtle screen
                 self.screen.resetscreen()
 
@@ -218,7 +218,9 @@ class Draw:
                 self.area_submit.config(state=NORMAL)
                 self.perimeter_entry.config(bg="white")
                 self.area_entry.config(bg="white")
-                self.do_this()                
+                self.do_this()  
+
+                              
 
             else:
                 print("Something went wrong")
@@ -229,8 +231,8 @@ class Draw:
             name.insert(0, "Please enter a float")
             name.after(1500, lambda e: name.delete(0, "end"), name.config(bg="white"))
 
-    
-
+       
+                
         
 
 if __name__ == '__main__':
