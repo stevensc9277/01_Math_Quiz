@@ -1,10 +1,13 @@
-from audioop import reverse
 import turtle
 import math
 from tkinter import *
 import random
 
 from numpy import angle
+
+# lists for angles and sides
+some_angles = []
+some_sides = []
 
 class Draw:
     def __init__(self, master):
@@ -57,11 +60,10 @@ class Draw:
         self.perimeter_submit = Button(self.area_perimeter_frame, text="Submit", padx=10, pady=10, command= lambda: self.answer_check(self.perimeter_entry, some_sides))
         self.perimeter_submit.grid(row=1, column=2)
 
-        # lists for angles and sides
-        some_angles = []
-        some_sides = []
+        self.do_this()
+        
 
-
+    def do_this(self):
         # generate angles and append to list
         a = random.randint(30, 80)
         b = 90 - a      # ensures triangle is always a right angle triangle
@@ -197,6 +199,21 @@ class Draw:
                 else:
                     self.perimeter_entry.config(bg="#98FB98")
                     self.perimeter_submit.config(state=DISABLED)
+
+            # if both area and perimeter answers are correct, generate a new question
+            if self.perimeter_entry.cget("bg") == "#98FB98" and self.area_entry.cget("bg") == "#98FB98":
+                print("Both are correct!")
+                some_angles.clear()
+                some_sides.clear()
+                self.screen.resetscreen()
+                self.perimeter_submit.config(state=NORMAL)
+                self.area_submit.config(state=NORMAL)
+                self.perimeter_entry.config(bg="white")
+                self.area_entry.config(bg="white")
+                self.do_this()                
+
+            else:
+                print("Something went wrong")
 
         except ValueError:
             name.delete(0, "end")
