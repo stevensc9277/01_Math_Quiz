@@ -15,18 +15,20 @@ class Draw:
         self.master_frame = Frame(root, bg=back, width=500, height=275)
         self.master_frame.grid()
         self.master_frame.config(bg="light blue")
-  
+        self.score_question_frame = Frame(self.master_frame, bg=back)
+        self.score_question_frame.grid(row=0, padx=10, pady=10, sticky="NEWS")
         self.canvas = Canvas(self.master_frame)
-
-        self.canvas.grid(row=0)
+        self.canvas.grid(row=1)
         self.screen = turtle.TurtleScreen(self.canvas)
         self.screen.bgcolor(back)
         self.to_draw = turtle.RawTurtle(self.screen)
         self.place_text = turtle.RawTurtle(self.screen)
         self.questions_frame = Frame(self.master_frame, bg=back)
-        self.questions_frame.grid(row=1)
+        self.questions_frame.grid(row=2)
 
-        self.question_label = Label(self.questions_frame, bg=back, text="Find the area and perimeter of the above triangle", font="arial 10 bold")
+        self.score_label = Label(self.score_question_frame, text="SCORE:")
+        self.score_label.grid(sticky="E")
+        self.question_label = Label(self.questions_frame, bg=back, text="Find the area and perimeter of the triangle below", font="arial 10 bold")
         self.question_label.grid(row=0, padx=10, pady=10, sticky="NEWS")
 
         self.user_lengths_label = Label(self.questions_frame, bg=back, justify=CENTER, font="arial 10 italic")
@@ -34,7 +36,7 @@ class Draw:
 
         # make entry labels and labels with a new frame
         self.area_perimeter_frame = Frame(self.master_frame, bg=back)
-        self.area_perimeter_frame.grid()
+        self.area_perimeter_frame.grid(row=3)
         self.area_label = Label(self.area_perimeter_frame, font="arial 13", text="Area", justify=LEFT, bg=back)
         self.area_label.grid(row=0, column=0, pady=10, padx=10, sticky="NEWS")
         self.area_entry = Entry(self.area_perimeter_frame, justify=CENTER, fg="grey")
@@ -59,6 +61,16 @@ class Draw:
 
         self.perimeter_submit = Button(self.area_perimeter_frame, text="Submit", padx=10, pady=10, command= lambda: self.answer_check(self.perimeter_entry, some_sides))
         self.perimeter_submit.grid(row=1, column=2)
+
+        # make export frame and buttons
+        self.export_quit_frame = Frame(self.master_frame, bg=back)
+        self.export_quit_frame.grid(row=4)
+        self.export_button = Button(self.export_quit_frame, width=10,  text="Export", font="Arial 12 bold", bg="#003366", fg="white")
+        self.export_button.grid(row=0, column=0, padx=5, pady=5)
+
+        self.quit_button = Button(self.export_quit_frame, width=10,  bg="#660000", text="Quit", font="arial 12 bold", fg="white")
+        self.quit_button.grid(row=0, column=1, padx=5, pady=5)
+
 
         self.do_this()
         
