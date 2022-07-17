@@ -2,12 +2,13 @@ import turtle
 import math
 from tkinter import *
 import random
-import time
-from numpy import angle
+# from numpy import angle
 
 # lists for angles and sides
 some_angles = []
 some_sides = []
+score = 0
+number = 1
 
 class Draw:
     def __init__(self, master):
@@ -26,8 +27,8 @@ class Draw:
         self.questions_frame = Frame(self.master_frame, bg=back)
         self.questions_frame.grid(row=2)
 
-        self.score_label = Label(self.score_question_frame, text="SCORE:")
-        self.score_label.grid(sticky="E")
+        self.number_label = Label(self.score_question_frame, text="Question Number: {}".format(number), bg=back, font="arial 10 bold")
+        self.number_label.grid(row=0, column=0, padx=10)
         self.question_label = Label(self.questions_frame, bg=back, text="Find the area and perimeter of the triangle below", font="arial 10 bold")
         self.question_label.grid(row=0, padx=10, pady=10, sticky="NEWS")
 
@@ -180,6 +181,7 @@ class Draw:
         self.triangle(lengths, angles)
     
     def answer_check(self, name, lengths):
+        global score, number
         # get user input
         try:
             answer = float(name.get())
@@ -215,7 +217,9 @@ class Draw:
             # if both area and perimeter answers are correct, generate a new question
             if self.perimeter_entry.cget("bg") == "#98FB98" and self.area_entry.cget("bg") == "#98FB98":
                 print("Both are correct!")
-                
+                score += 2
+                number += 1
+                print(score, number)
                 # reset lists and freeze canvas so user can see triangle before the reset
                 self.perimeter_entry.after(1500, lambda e: e, self.perimeter_entry.delete(0, "end"))
                 self.area_entry.after(1500, lambda e: e, self.area_entry.delete(0, "end"))
@@ -226,6 +230,7 @@ class Draw:
                 self.screen.resetscreen()
 
                 # change buttons back to normal and entry labels too
+                self.number_label.config(text="Question number: {}".format(number))
                 self.perimeter_submit.config(state=NORMAL)
                 self.area_submit.config(state=NORMAL)
                 self.perimeter_entry.config(bg="white")
