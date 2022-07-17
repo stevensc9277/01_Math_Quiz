@@ -57,6 +57,7 @@ class Start:
         self.help_button = Button(self.start_frame, text="Help", font="Arial 12", command=self.to_help)
         self.help_button.grid(row=3, padx=10, pady=10)
 
+    # for hard difficulty, made a separate class and frame from medium and easy to avoid / reduce conflicting errors
     def to_draw(self):
         do_draw = Draw(self)
 
@@ -67,14 +68,14 @@ class Start:
         root.withdraw()
     
     def to_quiz(self, difficulty):
-        # redirect to quiz
+        # redirect to quiz for easy and medium difficulty
         show_quiz = Quiz(self, difficulty)
         root.withdraw()
 
 
 class Quiz:
     def __init__(self, partner, difficulty):
-
+        # record score and stats here 
         self.score = 0
         self.quiz_stats = []
         back_ground = "light blue"
@@ -91,6 +92,7 @@ class Quiz:
         self.quiz_heading = Label(self.quiz_frame, text="Math Quiz: ", justify=LEFT, font="arial 14 bold", bg=back_ground)
         self.quiz_heading.grid(row=0, padx=10, pady=10, sticky=W)
 
+        # made a frame to show questions answered correctly and incorrectly. Appears at the top right corner of the quiz_frame (main frame)
         self.numbers_frame = Frame(self.quiz_frame, bg=back_ground)
         self.numbers_frame.grid(row=0, sticky=E)
         self.quiz_right = Label(self.numbers_frame, text="Right: 0", font="arial 11 italic", bg=back_ground)
@@ -123,17 +125,19 @@ class Quiz:
         self.quit_button = Button(self.help_export_frame, text="Quit", fg="white", width=10, bg="#660000", font="arial 14 bold", command=self.to_quit)
         self.quit_button.grid(row=0, column=1, padx=5, pady=10)
 
+        # easy difficulty, uses numbers 1 and 2 to determine whether to make addition/subtraction questions or multiplication/division questions
         if difficulty == 1:
             print("1")
             self.quiz_heading.config(text="Math Quiz: Easy")
             self.make_question(difficulty)
             
-        
+        # medium difficulty
         elif difficulty == 2:
             print("2")
             self.quiz_heading.config(text="Math Quiz: Medium")
             self.make_question(difficulty)
 
+        # hard difficulty, pre triangle
         else:
             print("3")
 
@@ -228,6 +232,7 @@ class Help:
         self.how_heading = Label(self.help_frame, text="Help / Instructions", font="arial 14 bold")
         self.how_heading.grid(row=0)
 
+        # quiz instructions
         help_text = "Select a difficulty level to start the quiz. The quiz is solely based on straight forward calculations so there are no word problems involved at all. Types of questions to expect for each level:\n\nEasy - Simple addition and subtraction questions a child could do\n\nMedium - Multiplication and division questions aimed for students around year 9 and 10\n\nHard - Solving for the area and perimeter of right-angled triangles.You have 2 attempts at solving for either area / perimeter, after 2 attempts it is treated as you answering wrongly. Good luck :)"
         
         self.help_text = Label(self.help_frame, text=help_text, justify=LEFT, wrap=400, padx=10, pady=10)
@@ -246,29 +251,39 @@ class Help:
 class Draw:
     def __init__(self, partner):
         back = "light blue"
+        # closes previous window here, previously had an error where the triangle window would disappear after loading
         root.withdraw()
+
+        # create and adjust main frame for turtle canvas
         self.master_frame = Toplevel(bg=back, width=500, height=275)
         self.master_frame.grid()
         self.master_frame.config(bg="light blue")
+
+        # to show user how many questions they have answered
         self.score_question_frame = Frame(self.master_frame, bg=back)
         self.score_question_frame.grid(row=0, padx=10, pady=10, sticky="NEWS")
+
+        # turtle canvas and screen
         self.canvas = Canvas(self.master_frame)
         self.canvas.grid(row=1)
         self.screen = turtle.TurtleScreen(self.canvas)
         self.screen.bgcolor(back)
+
+        # pens to draw turtle
         self.to_draw = turtle.RawTurtle(self.screen)
         self.place_text = turtle.RawTurtle(self.screen)
+
         self.questions_frame = Frame(self.master_frame, bg=back)
         self.questions_frame.grid(row=2)
 
- 
+        # use to format triangle data later
         anglength_dict = {
             'Angles': some_angles,
             'Angle_Names': ["ABC", "BCA", "CAB"],
             'Lengths': some_sides,
             'Lines': ["AB", "BC", "CA"]
             }
-        # if users press cross at top, quiz quits
+        # if users press cross at top, quiz ends
         self.master_frame.protocol('WM_DELETE_WINDOW', self.to_quit)
 
         self.number_label = Label(self.score_question_frame, text="Question Number: {}".format(number), bg=back, font="arial 10 bold")
@@ -279,12 +294,13 @@ class Draw:
         self.user_lengths_label = Label(self.questions_frame, bg=back, justify=CENTER, font="arial 10 italic")
         self.user_lengths_label.grid(row=1, padx=10)
 
-        # make entry labels and labels with a new frame
+        # make entry labels with a new frame
         self.area_perimeter_frame = Frame(self.master_frame, bg=back)
         self.area_perimeter_frame.grid(row=3)
         self.area_label = Label(self.area_perimeter_frame, font="arial 13", text="Area", justify=LEFT, bg=back)
         self.area_label.grid(row=0, column=0, pady=10, padx=10, sticky="NEWS")
         self.area_entry = Entry(self.area_perimeter_frame, justify=CENTER, fg="grey")
+        # inserts text into the entry label, does get removed
         self.area_entry.insert(0, "A = 0.5 x b x h")
 
         # bind commands, shows formulae if no input is detected or does nothing
@@ -295,6 +311,7 @@ class Draw:
         self.perimeter_label = Label(self.area_perimeter_frame, font="arial 13", text="Perimeter", justify=LEFT, bg=back)
         self.perimeter_label.grid(row=1, column=0, padx=10, pady=10, sticky="NEWS")
         self.perimeter_entry = Entry(self.area_perimeter_frame, justify=CENTER, fg="grey")
+        # inserts text into the entry label, does get removed
         self.perimeter_entry.insert(0, "P = AB + BC + CA")
         self.perimeter_entry.bind("<FocusIn>", lambda e: self.on_enter(e, self.perimeter_entry))
         self.perimeter_entry.bind("<FocusOut>", lambda e: self.on_leave(e, self.perimeter_entry))
@@ -329,7 +346,8 @@ class Draw:
     def do_this(self):
         # generate angles and append to list
         a = random.randint(30, 80)
-        b = 90 - a      # ensures triangle is always a right angle triangle
+        # ensures triangle is always a right angle triangle
+        b = 90 - a      
         some_angles.append(a)
         some_angles.append(b)
 
@@ -339,14 +357,15 @@ class Draw:
 
         self.finder(some_angles, some_sides)
        
-
-    def on_enter(self, e, name):  # changes entry label fg back to black
+    # changes entry label fg back to black and removes formulae
+    def on_enter(self, e, name): 
         user_input = name.get()
         if user_input == "A = 0.5 x b x h" or user_input == "P = AB + BC + CA":
             name.delete(0, "end")
             name['foreground'] = 'black'
-    
-    def on_leave(self, e, name):  # changes entry label fg back to black and shows formulae if there was no input given
+
+    # changes entry label fg back to black and shows formulae if there was no input given
+    def on_leave(self, e, name):  
         user_input =  name.get()
         if name == self.area_entry and user_input == "":
             name.insert(0, "A = 0.5 x b x h")
@@ -370,6 +389,8 @@ class Draw:
         self.place_text.penup()
         self.to_draw.color("black")
         self.to_draw.pensize(5)
+
+        # start drawing the triangle with given lengths and angles
         self.place_text.write('A', font = 'style', move = True, align = 'right')
         self.to_draw.forward(displacement[0] * 10)  # Make to_draw draw a triangle
         self.to_draw.left(180 - angle[0])
