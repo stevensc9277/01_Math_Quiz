@@ -170,6 +170,7 @@ class Quiz:
 
         else:
             # generate operator and numbers for multiplication and division
+            # https://stackoverflow.com/questions/30926323/how-to-do-a-calculation-on-python-with-a-random-operator
             operators = [('x', operator.mul), ('/', operator.truediv)]
             op, fn = random.choice(operators)
             num1 = random.randint(1, 12)
