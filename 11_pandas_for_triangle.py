@@ -152,7 +152,7 @@ class Quiz:
 
     # generating addition and subtraction questions
     def make_question(self, fun):    
-        
+        self.submit_button.config(state=NORMAL)
         # after making a new question, revert any color changes and clear entry box
         self.answer_entry.config(bg="white")
         self.answer_entry.delete(0, 'end')
@@ -206,6 +206,7 @@ class Quiz:
             right += 1
      
             self.answer_entry.config(bg="#98FB98")
+        self.submit_button.config(state=DISABLED)
         self.score = (100*right)/(right+wrong)
         # freezes gui for about 2 seconds and then generate a new question
         self.quiz_right.config(text="Right: {}".format(right))
@@ -651,7 +652,7 @@ class Export:
                 f.write("Congratulations! You answered every question correctly")
             
             elif score <= 50:
-                f.write("You should study more maths")
+                f.write("You should study more maths\n\n")
 
             for item in quiz_history:
                 f.write(item + "\n")
