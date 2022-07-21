@@ -189,23 +189,32 @@ class Quiz:
     def to_check(self, number1, oper, number2, sum_or_diff, difficulty):
         global right, wrong
         # solve and check
-        answer = self.answer_entry.get()
-        answer = float(answer)
-
-        # if answer is wrong change bg to red to indicate it is wrong
-        if answer != sum_or_diff:
+        
+        try:
+            answer = self.answer_entry.get()
+            answer = float(answer)
+            # if answer is wrong change bg to red to indicate it is wrong
+            if answer != sum_or_diff:
+                print("Incorrect")
+                wrong += 1
+                self.question_label.config(text="{} {} {} = {}".format(number1, oper, number2, sum_or_diff))
+                self.answer_entry.config(bg="#ffafaf")
+                self.quiz_stats.append("{} {} {} = {}       ||      Your answer was: {}".format(number1, oper, number2, sum_or_diff, answer))
+            
+            # if answer is correct change bg to green to indicate it is right
+            else:
+                print("Correct")
+                right += 1
+        
+                self.answer_entry.config(bg="#98FB98")
+        
+        except ValueError:
             print("Incorrect")
             wrong += 1
             self.question_label.config(text="{} {} {} = {}".format(number1, oper, number2, sum_or_diff))
             self.answer_entry.config(bg="#ffafaf")
             self.quiz_stats.append("{} {} {} = {}       ||      Your answer was: {}".format(number1, oper, number2, sum_or_diff, answer))
         
-        # if answer is correct change bg to green to indicate it is right
-        else:
-            print("Correct")
-            right += 1
-     
-            self.answer_entry.config(bg="#98FB98")
         self.submit_button.config(state=DISABLED)
         self.score = (100*right)/(right+wrong)
         # freezes gui for about 2 seconds and then generate a new question
