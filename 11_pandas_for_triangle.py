@@ -542,6 +542,7 @@ class Draw:
                 to_write = list(dict.fromkeys(to_write))
 
         except ValueError:
+            tries += 1
             name.delete(0, "end")
             name.config(bg="#ffafaf")
             name.insert(0, "Please enter a float")
