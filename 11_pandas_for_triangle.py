@@ -116,7 +116,7 @@ class Quiz:
         # Stats button to export results and a calculator (row 3)
         self.help_export_frame = Frame(self.quiz_frame, bg=back_ground)
         self.help_export_frame.grid(row=3)
-        self.export_button = Button(self.help_export_frame, text="Quiz Stats", font="Arial 14 bold", bg="#003366", fg="white", command=lambda: self.export(self.quiz_stats, self.score))
+        self.export_button = Button(self.help_export_frame, text="Export", font="Arial 14 bold", bg="#003366", fg="white", command=lambda: self.export(self.quiz_stats, self.score))
         self.export_button.grid(row=0, column=0, padx=5, pady=10)
 
      
@@ -338,7 +338,7 @@ class Draw:
         # make export frame and buttons
         self.export_quit_frame = Frame(self.master_frame, bg=back)
         self.export_quit_frame.grid(row=4)
-        self.export_button = Button(self.export_quit_frame, width=10,  text="Quiz Stats", font="Arial 12 bold", bg="#003366", fg="white", command=lambda: self.export(to_write))
+        self.export_button = Button(self.export_quit_frame, width=10,  text="Export", font="Arial 12 bold", bg="#003366", fg="white", command=lambda: self.export(to_write))
         self.export_button.grid(row=0, column=0, padx=5, pady=5)
 
         self.quit_button = Button(self.export_quit_frame, width=10,  bg="#660000", text="Quit", font="arial 12 bold", fg="white", command=self.to_quit)
