@@ -20,7 +20,6 @@ wrong = 0
 
 # record number of questions user has attempted to solve (number) and number of inconsistent tries made when solving for area / perimeter (tries)
 number = 1
-tries = 0
 
 class Start:
     def __init__(self, parent):
@@ -111,6 +110,7 @@ class Quiz:
         self.answer_entry.grid(row=0, column=0)
         self.submit_button = Button(self.entry_error_frame, text="Submit", font="arial 14", command= self.to_check)
         self.submit_button.grid(row=0, column=1, padx=5)
+        
        
 
         # Stats button to export results and a calculator (row 3)
@@ -167,6 +167,7 @@ class Quiz:
                 num1 = num1+num2
             correct_answer = fn(num1, num2)
             self.submit_button.config(command= lambda: self.to_check(num1, op, num2, correct_answer, fun))
+            self.answer_entry.bind("<Return>", lambda e: self.to_check(num1, op, num2, correct_answer, fun))
 
         else:
             # generate operator and numbers for multiplication and division
@@ -180,6 +181,7 @@ class Quiz:
             correct_answer = round(fn(num1, num2), 2)
             print(correct_answer)
             self.submit_button.config(command= lambda: self.to_check(num1, op, num2, correct_answer, fun))
+            self.answer_entry.bind("<Return>", lambda e: self.to_check(num1, op, num2, correct_answer, fun))
 
         # config question to show numbers
         question_text = "{} {} {} = ?".format(num1, op, num2)
@@ -215,6 +217,7 @@ class Quiz:
             self.answer_entry.config(bg="#ffafaf")
             self.quiz_stats.append("{} {} {} = {}       ||      Your answer was: {}".format(number1, oper, number2, sum_or_diff, answer))
         
+        self.answer_entry.unbind("<Return>")
         self.submit_button.config(state=DISABLED)
         self.score = (100*right)/(right+wrong)
         # freezes gui for about 2 seconds and then generate a new question
@@ -244,7 +247,7 @@ class Help:
         self.how_heading.grid(row=0)
 
         # quiz instructions
-        help_text = "Select a difficulty level to start the quiz. The quiz is solely based on straight forward calculations so there are no word problems involved at all. Types of questions to expect for each level:\n\nEasy - Simple addition and subtraction questions a child could do\n\nMedium - Multiplication and division questions aimed for students around year 9 and 10\n\nHard - Solving for the area and perimeter of right-angled triangles.You have 2 attempts at solving for either area / perimeter, after 2 attempts it is treated as you answering wrongly. Good luck :)"
+        help_text = "Select a difficulty level to start the quiz. The quiz is solely based on straight forward calculations so there are no word problems involved at all. Types of questions to expect for each level:\n\nEasy - Simple addition and subtraction questions a child could do\n\nMedium - Multiplication and division questions aimed for students around year 9 and 10\n\nHard - Solving for the area and perimeter of right-angled triangles. This difficulty does not make use of pythagorean triples, which is when a^2 + b^2 = c^2 and 'a', 'b', 'c' are 3 consecutive numbers. Therefore, it is recommended that the user uses a pen and piece of paper, or even a calculator, to solve for the area and perimeter. Good luck :)"
         
         self.help_text = Label(self.help_frame, text=help_text, justify=LEFT, wrap=400, padx=10, pady=10)
         self.help_text.grid(row=1)
@@ -463,7 +466,8 @@ class Draw:
         self.triangle(lengths, angles)
     
     def answer_check(self, name, lengths, anglength_dict):
-        global tries, number, to_write
+        global number, to_write
+
         # get user input
         try:
             answer = float(name.get())
@@ -477,10 +481,21 @@ class Draw:
                 print()
 
                 if answer != area:
-                    tries += 1
-                    print(tries)
                     self.area_entry.config(bg="#ffafaf")
-                
+                    self.area_submit.config(state=DISABLED)
+                    ang_len_frame = pandas.DataFrame(anglength_dict)
+                    ang_len_frame = ang_len_frame.set_index('Angles')
+
+                    # Convert frames to strings
+                    ang_len_text = pandas.DataFrame.to_string(ang_len_frame)
+
+                    # export to file
+                    area = round(0.5 * lengths[0] * lengths[1], 2)
+                    perimeter = round(sum(lengths), 2)
+                    to_write.append(ang_len_text)
+                    to_write.append("The area was {}. You answered {}".format(area, answer))
+                    to_write = list(dict.fromkeys(to_write))
+
                 else:
                     self.area_entry.config(bg="#98FB98")
                     self.area_submit.config(state=DISABLED)
@@ -492,17 +507,40 @@ class Draw:
                 print()
 
                 if answer != perimeter:
-                    tries += 1
-                    print(tries)
                     self.perimeter_entry.config(bg="#ffafaf")
+                    self.perimeter_submit.config(state=DISABLED)
+                    print(self.perimeter_submit['state'])
+                    ang_len_frame = pandas.DataFrame(anglength_dict)
+                    ang_len_frame = ang_len_frame.set_index('Angles')
+
+                    # Convert frames to strings
+                    ang_len_text = pandas.DataFrame.to_string(ang_len_frame)
+
+                    # export to file
+                    area = round(0.5 * lengths[0] * lengths[1], 2)
+                    perimeter = round(sum(lengths), 2)
+                    to_write.append(ang_len_text)
+                    to_write.append("The perimeter was {}. You answered {}".format(perimeter, answer))
+                    to_write = list(dict.fromkeys(to_write))
                 
                 else:
                     self.perimeter_submit.config(state=DISABLED)
                     self.perimeter_entry.config(bg="#98FB98")
-                    
+
             # if both area and perimeter answers are correct, generate a new question
-            if self.perimeter_entry.cget("bg") == "#98FB98" and self.area_entry.cget("bg") == "#98FB98":
-                print("Both are correct!")
+            if str(self.perimeter_submit['state']) == 'disabled' and str(self.area_submit['state']) == 'disabled':
+                # Print a short statement if user answered both correctly
+                if self.area_entry.cget('bg') == "#98FB98" and self.perimeter_entry.cget('bg') == "#98FB98":
+                    print("User answered both correctly")
+                
+                else:
+                    if self.area_entry.cget('bg') == "#98FB98":
+                        to_write.append("The area was {}".format(area))
+
+                    elif self.perimeter_entry.cget('bg') == "#98FB98":
+                        to_write.append("The perimeter was {}".format(perimeter))
+
+                print("Proceeding to the next question!")
                 number += 1
                 print(number)
                 # reset lists and freeze canvas so user can see triangle before the reset
@@ -520,32 +558,16 @@ class Draw:
                 self.area_submit.config(state=NORMAL)
                 self.perimeter_entry.config(bg="white")
                 self.area_entry.config(bg="white")
-                tries = 0
                 self.do_this()  
                 
             else:
                 print("Something went wrong")
             
-            if tries >= 2:
-                ang_len_frame = pandas.DataFrame(anglength_dict)
-                ang_len_frame = ang_len_frame.set_index('Angles')
-
-                # Convert frames to strings
-                ang_len_text = pandas.DataFrame.to_string(ang_len_frame)
-
-                # export to file
-                area = round(0.5 * lengths[0] * lengths[1], 2)
-                perimeter = round(sum(lengths), 2)
-                to_write.append(ang_len_text)
-                to_write.append("The area was {}".format(area))
-                to_write.append("The perimeter was {}".format(perimeter))
-                to_write = list(dict.fromkeys(to_write))
 
         except ValueError:
-            tries += 1
             name.delete(0, "end")
             name.config(bg="#ffafaf")
-            name.insert(0, "Please enter a float")
+            name.insert(0, "Please enter a float or integer")
             name.after(1500, lambda e: name.delete(0, "end"), name.config(bg="white"))
     
     def to_quit(self):
@@ -655,7 +677,7 @@ class Export:
             now = dt.datetime.now()
 
             # add new line at end of each item
-            f.write("Questions answered incorrectly \t\t (Total Score: {}%)\n\n".format(score))
+            f.write("Questions answered incorrectly \t\t (Total Score: {:.2f}%)\n\n".format(score))
             f.write("Made on: " + now.strftime('%A, %B %d, %Y') + "\n\n")
             
             if score == 100:
@@ -808,6 +830,7 @@ class Triangle_Export:
         partner.export_button.config(state=NORMAL)
         self.export_box.destroy()
    
+
 # main routine
 if __name__ == "__main__":
     root = Tk()
