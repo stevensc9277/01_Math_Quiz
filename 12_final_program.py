@@ -5,6 +5,7 @@ from functools import partial
 import random
 import turtle
 import math
+import numpy
 import datetime as dt
 import re 
 import pandas
@@ -358,9 +359,17 @@ class Draw:
 
     # generate angles and a length
     def do_this(self):
-        A = random.randint(1, 12)
+        # randomly select lengths
+        A = random.randint(7, 12)
+        B = random.randint(6, 12)
 
-        self.finder(some_angles, some_sides)
+        a = 90
+        some_sides.append(A)
+        some_sides.append(B)
+        some_angles.append(a)
+
+        
+        self.finder(some_sides, some_angles)
        
     # changes entry label fg back to black and removes formulae
     def on_enter(self, e, name): 
@@ -413,46 +422,28 @@ class Draw:
         self.to_draw.forward(displacement[2] * 10)
         # Complete the triangle
 
-    # solves for 2 uknown lengths
-    def finder(self, angles, lengths):
-        # print known angles for testing purposes
-        print(angles[1], angles[0], lengths[0])
-
-        # first find missing angle
-        c = 180 - sum(angles)
-        angles.append(c)
-
-        # sort angles in ascending order
-        angles.sort(reverse=True)
-        print(angles)
-
-        # assume known side is smallest side
-        B = (lengths[0] * math.sin(math.radians(angles[1]))) / math.sin(math.radians(angles[0]))
-        C = (lengths[0] * math.sin(math.radians(angles[2]))) / math.sin(math.radians(angles[0]))
-
-        # round to 2dp and append lengths to list
-        B = round(B, 2)
-        C = round(C, 2)
-        lengths.append(B)
-        lengths.append(C)
-
-        # find perimeter and area
-        perimeter = sum(lengths)
-        print(lengths, perimeter)
-
-        # sort out lengths to match respective angles
-        # lengths[0] = lengths[1]
-        # lengths[1] = lengths[2]
-        # lengths[2] = int(perimeter - lengths[0] - lengths[1])
-        lengths.sort()
-        print("First length is {} before sort, second length is {}".format(lengths[0], lengths[1]))
-        lengths[0] = lengths[1]
+    # solves for 2 uknown angles and a length
+    def finder(self, lengths, angles):
+        # find missing side using cos rule (side opposite angle)
+        side_square = pow(lengths[0], 2) + pow(lengths[1], 2) - 2*(numpy.prod(lengths)) * math.cos(math.radians(angles[0]))
+        side_own = math.sqrt(side_square)
+        side_own = round(side_own, 2)
+        print("Unknown length is ", side_own)
+        lengths.append(side_own)
         
-        lengths[1] = round(perimeter - lengths[0] - lengths[2], 2)
-        print("First length is {} after sort, second length is {}".format(lengths[0], lengths[1]))
-        area = round(0.5*lengths[0] * lengths[1], 2)
+        # need to find angle next
+        # find all angles from here
+        fraction = lengths[0] / side_own
         
-        print(lengths, area)
+        product = fraction * math.sin(math.radians(some_angles[0])) 
+        
+        ang_opp_other = round(math.degrees(math.asin(product)), 2)
+        
+        angles.append(ang_opp_other)
+        last_ang = 180 - sum(some_angles)
+        angles.append(last_ang)
+        # enough info to find area and perimeter
+        print(lengths, angles)
         
         self.triangle(lengths, angles)
     
@@ -464,9 +455,8 @@ class Draw:
             answer = float(name.get())
 
             if name == self.area_entry:
-
                 # calculate area, see if it matches user input
-                area = round(0.5 * lengths[0] * lengths[1], 2)
+                area = round(0.5 * lengths[1] * lengths[0], 2)
                 print("Area given is ", answer)
                 print("Actual area is ", area)
                 print()
