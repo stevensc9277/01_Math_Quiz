@@ -248,7 +248,7 @@ class Help:
         self.how_heading.grid(row=0)
 
         # quiz instructions
-        help_text = "Select a difficulty level to start the quiz. The quiz is solely based on straight forward calculations so there are no word problems involved at all. Types of questions to expect for each level:\n\nEasy - Simple addition and subtraction questions a child could do\n\nMedium - Multiplication and division questions aimed for students around year 9 and 10\n\nHard - Solving for the area and perimeter of right-angled triangles. This difficulty does not make use of pythagorean triples, which is when a^2 + b^2 = c^2 and 'a', 'b', 'c' are 3 consecutive numbers. Therefore, it is recommended that the user uses a pen and piece of paper, or even a calculator, to solve for the area and perimeter. Good luck :)"
+        help_text = "Select a difficulty level to start the quiz. The quiz is solely based on straight forward calculations so there are no word problems involved at all. Types of questions to expect for each level:\n\nEasy - Simple addition and subtraction questions a child could do\n\nMedium - Multiplication and division questions aimed for students around year 9 and 10\n\nHard - Solving for the area and perimeter of right-angled triangles. This difficulty does not make use of pythagorean triples, which is when a^2 + b^2 = c^2 and 'a', 'b', 'c' are 3 consecutive numbers. Therefore, it is recommended that the user uses a pen and piece of paper, or even a calculator, to solve for the area and perimeter (Answers must be in 2dp or 0dp if it is a whole number). Good luck :)"
         
         self.help_text = Label(self.help_frame, text=help_text, justify=LEFT, wrap=400, padx=10, pady=10)
         self.help_text.grid(row=1)
