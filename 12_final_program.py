@@ -303,7 +303,7 @@ class Draw:
 
         self.number_label = Label(self.score_question_frame, text="Question Number: {}".format(number), bg=back, font="arial 10 bold")
         self.number_label.grid(row=0, column=0, padx=10)
-        self.question_label = Label(self.questions_frame, bg=back, text="Find the area and perimeter of the triangle below", font="arial 10 bold")
+        self.question_label = Label(self.questions_frame, bg=back, text="Find the area and perimeter of the right angled triangle below", font="arial 10 bold")
         self.question_label.grid(row=0, padx=10, pady=10, sticky="NEWS")
 
         self.user_lengths_label = Label(self.questions_frame, bg=back, justify=CENTER, font="arial 10 italic")
